@@ -27,7 +27,7 @@ inference = VariableElimination(model)
 
 #Interfata
 infer = VariableElimination(model)
-result = infer.query(variables=['A'], evidence={'E': 1})
+result = infer.query(variables=['E'], evidence={'A': 1})
 print(result)
 
 pos = nx.circular_layout(model)
@@ -37,12 +37,16 @@ plt.show()
 
 #EX2
 # Calcularea probabilității să fi avut loc un cutremur dată fiind declanșarea alarmei de incendiu
-result = inference.query(variables=['A'], evidence={'E': 1})
+result = inference.query(variables=['E'], evidence={'A': 1})
+print(result)
+result = inference.query(variables=['E'], evidence={'A': 0})
 print(result)
 
 
 #EX3
 
 # Calcularea probabilității ca un incendiu să fi avut loc fără activarea alarmei de incendiu
-result = inference.query(variables=['A'], evidence={'E': 0})
+result = inference.query(variables=['I'], evidence={'A': 0})
+print(result)
+result = inference.query(variables=['I'], evidence={'A': 1})
 print(result)
