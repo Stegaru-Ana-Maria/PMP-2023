@@ -20,10 +20,9 @@ data = stats.bernoulli.rvs(p=theta_real, size=20000)
 data1 = stats.bernoulli.rvs(p=theta_real1, size=20000)
 
 
-# rezultate jucator P0
+# rezultate posibile
 bb = []
 bs = []
-# rezultate jucator P1
 sb = []
 ss = []
 for i in range(20000):
