@@ -50,6 +50,27 @@ print(pm.summary(trace).round(2))
 # Atât frecvența procesorului (Speed), cât și mărimea hard diskului (HardDrive), par să fie predictorii utili ai prețului de vânzare, 
 # deoarece intervalele HDI pentru coeficienții lor nu includ zero, indicând o asociere semnificativă.
 
+new_data = pd.DataFrame({'Speed': [33], 'HardDrive': [540]})
+
+scaler = StandardScaler().fit(data[['Speed', 'HardDrive']])
+new_data_scaled = scaler.transform(new_data)
+
+with model:
+    post_pred = pm.sample_posterior_predictive(trace, samples=5000, random_seed=42)
+
+mu_new = trace['alpha'] + trace['beta1'] * new_data_scaled[:, 0] + trace['beta2'] * np.log(new_data_scaled[:, 1])
+
+hdi_90 = pm.stats.hpd(mu_new, hdi_prob=0.9)
+
+plt.figure(figsize=(8, 6))
+plt.hist(post_pred['price'].mean(axis=1), bins=50, color='skyblue', alpha=0.7, label='Simulated Prices')
+plt.axvline(hdi_90[0], color='red', linestyle='--', label='HDI 5%')
+plt.axvline(hdi_90[1], color='red', linestyle='--', label='HDI 95%')
+plt.title('Simulated Prices and 90% HDI')
+plt.xlabel('Price')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
 
 
 
