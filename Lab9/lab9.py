@@ -37,3 +37,30 @@ plt.show()
 print(pm.summary(trace))
 az.plot_pair(trace, var_names=['beta0', 'beta1', 'beta2'])
 plt.show()
+
+# Problema 2
+gre = data['GRE'].values
+gpa = data['GPA'].values
+
+posterior = trace.posterior.stack(samples=("chain", "draw"))
+
+x_1 = np.column_stack((gre, gpa))
+idx = np.argsort(gre)
+
+beta0_mean = posterior["beta0"].mean("samples").values
+beta1_mean = posterior["beta1"].mean("samples").values
+beta2_mean = posterior["beta2"].mean("samples").values
+
+xx, yy = np.meshgrid(np.linspace(gre.min(), gre.max(), 100), np.linspace(gpa.min(), gpa.max(), 100))
+
+decision_boundary = -(beta0_mean + beta1_mean * xx + beta2_mean * yy) / beta2_mean
+hdi_94 = pm.hdi(decision_boundary, hdi_prob=0.94)
+
+plt.scatter(gre, gpa, c=data['Admission'])
+plt.fill_between(xx[0], hdi_94[:, 0], hdi_94[:, 1], color='red', alpha=0.2, label='Interval HDI 94%')
+plt.plot(xx[0], decision_boundary, color='k', linewidth=1, label='Granița de Decizie')
+plt.title("Granița de decizie și Intervalul HDI")
+plt.xlabel("GRE")
+plt.ylabel("GPA")
+plt.show()
+
