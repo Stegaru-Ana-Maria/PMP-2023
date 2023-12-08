@@ -38,7 +38,7 @@ print(pm.summary(trace))
 az.plot_pair(trace, var_names=['beta0', 'beta1', 'beta2'])
 plt.show()
 
-# Problema 2
+# Ex 2
 gre = data['GRE'].values
 gpa = data['GPA'].values
 
@@ -64,3 +64,13 @@ plt.xlabel("GRE")
 plt.ylabel("GPA")
 plt.show()
 
+# Ex 3
+new_data = {'GRE': (550 - data['GRE'].mean()) / data['GRE'].std(),
+            'GPA': (3.5 - data['GPA'].mean()) / data['GPA'].std()}
+
+with logistic_model:
+    new_p = pm.invlogit(beta0 + beta1 * new_data['GRE'] + beta2 * new_data['GPA'])
+    
+hdi = np.percentile(new_p, q=[5, 95])
+
+print(f'Intervalul de 90% HDI pentru probabilitatea de admitere: {hdi}')
